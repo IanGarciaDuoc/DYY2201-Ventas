@@ -6,15 +6,19 @@ import com.example.ventas.model.Venta;
 import com.example.ventas.service.ProductoService;
 import com.example.ventas.service.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import java.util.stream.Collectors;
+
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 
@@ -29,10 +33,29 @@ public class VentaController {
    
 
     // Endpoint para obtener todas las ventas
+
+    /**
+     * @return
+     */
     @GetMapping
-    public ResponseEntity<List<Venta>> getAllVentas() {
-        List<Venta> ventas = ventaService.getAll();
-        return ResponseEntity.ok(ventas);
+    public ResponseEntity<CollectionModel<EntityModel<Venta>>> getAllVentas() {
+        List<EntityModel<Venta>> ventasModel = ventaService.getAll().stream()
+            .map(venta -> {
+                try {
+                    return EntityModel.of(venta,
+                            linkTo(methodOn(VentaController.class).getVentaById(venta.getId())).withSelfRel());
+                } catch (Exception e) {
+                    
+                    e.printStackTrace();
+                }
+                return null;
+            })
+            .collect(Collectors.toList());
+
+        CollectionModel<EntityModel<Venta>> collectionModel = CollectionModel.of(ventasModel,
+                linkTo(methodOn(VentaController.class).getAllVentas()).withSelfRel());
+
+        return ResponseEntity.ok(collectionModel);
     }
 
     // Endpoint para obtener una venta por su ID

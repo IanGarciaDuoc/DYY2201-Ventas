@@ -1,3 +1,4 @@
+
 package com.example.ventas.model;
 
 import jakarta.persistence.*;
@@ -6,7 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Date;
-import java.util.List;
+
 
 @Entity
 @Table(name = "VENTA")

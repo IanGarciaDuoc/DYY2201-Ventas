@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,17 +39,14 @@ public class VentaControllerTest {
     @MockBean
     private ProductoService productoService;
 
-@Test
+    @Test
     public void testGetAllVentas() throws Exception {
-    List<Venta> ventas = new ArrayList<>();
-    ventas.add(new Venta()); // Asume que Venta tiene un constructor predeterminado
-
-    given(ventaService.getAll()).willReturn(ventas);
-
-    mockMvc.perform(get("/ventas"))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        mockMvc.perform(get("/ventas"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaTypes.HAL_JSON));
     }
+
+
 @Test
 public void testGetVentaById() throws Exception {
     Long ventaId = 1L;
